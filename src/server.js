@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express'
+import exitHook from 'async-exit-hook'
 import { CONNECT_DB, GET_DB } from '~/config/mongodb'
 
 
@@ -9,14 +10,19 @@ const START_SERVER = () => {
   const hostname = 'localhost'
   const port = 8017
 
-  app.get('/', (req, res) => {
-    // console.log(await GET_DB().listCollection().toArray())
+  app.get('/', async (req, res) => {
+    console.log(await GET_DB().listCollections().toArray())
 
     res.end('<h1>Hello World!</h1><hr>')
   })
 
   app.listen(port, hostname, () => {
-    console.log(`Hello Trung Quan Dev, I am running at ${hostname}:${port}/`)
+    console.log(`Hello Quang Minh Dev, I am running at ${hostname}:${port}/`)
+  })
+
+  // Thực hiện cleanup trước khi dừng server
+  exitHook(() => {
+    console.log('Exiting app')
   })
 }
 
@@ -26,8 +32,8 @@ const START_SERVER = () => {
     await CONNECT_DB()
     console.log('2. Connected to MGDB Cloud Atlas...')
     START_SERVER()
-  } catch(error) {
-    console.error(error)
+  } catch (error) {
+    console.error('Error connecting to MongoDB: ', error)
     process.exit(0)
   }
 })()

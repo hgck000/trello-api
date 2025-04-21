@@ -1,11 +1,4 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
-const MONGODB_URI = 'mongodb+srv://hgck000:1BbLdVsBlGXpkTJW@cluster0-quangminhdev.iqyvgm9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0-QuangMinhDev'
-// const MONGODB_URI = 'mongodb+srv://hgck000:1BbLdVsBlGXpkTJW@cluster0-quangminhdev.iqyvgm9.mongodb.net/?appName=Cluster0-QuangMinhDev'
+const MONGODB_URI = 'mongodb+srv://quangminhdev:yacvfYSNjiGKcrHf@cluster0-quangminhdev.sdcl2e1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0-QuangMinhDev'
 
 const DATABASE_NAME = 'trello-quangminh-mern-stack-pro'
 
@@ -29,8 +22,17 @@ export const CONNECT_DB = async () => {
 
   // Kết nối thành công thì lấy ra Database theo tên và gán ngược nó lại vào biến trelloDatabaseInsatance ở trên của chúng ta
   trelloDatabaseInstance = mongoClientInstance.db(DATABASE_NAME)
+
+  // console.log('[✅] CONNECT_DB thành công')
+  // return trelloDatabaseInstance
 }
 
 export const GET_DB = () => {
   if (!trelloDatabaseInstance) throw new Error('Must connect to Database first!')
+  return trelloDatabaseInstance
+}
+
+// Đóng kết nối tới DB khi cần
+export const CLOSE_DB = async () => {
+  await mongoClientInstance.close()
 }
