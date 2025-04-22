@@ -1560,6 +1560,11 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+dotenv@^16.3.1:
+  version "16.5.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.5.0.tgz#092b49f25f808f020050051d1ff258e404c78692"
+  integrity sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
@@ -2541,9 +2546,10 @@ node-releases@^2.0.13:
   version "1.0.0"
   dependencies:
     "@babel/runtime" "^7.22.10"
+    async-exit-hook "^2.0.1"
     express "^4.18.2"
     mongodb "^5.8.1"
-    nodejs-expressjs-mongodb-base-project "file:../../../../AppData/Local/Yarn/Cache/v6/npm-nodejs-expressjs-mongodb-base-project-1.0.0-5cd1e6d4-1433-40ef-8b66-2a0d01ee7415-1745238876832/node_modules/nodejs-expressjs-mongodb-base-project"
+    nodejs-expressjs-mongodb-base-project "file:../../../../AppData/Local/Yarn/Cache/v6/npm-nodejs-expressjs-mongodb-base-project-1.0.0-b914c055-ad1e-4124-b757-16a4daa78c7d-1745299240436/node_modules/nodejs-expressjs-mongodb-base-project"
 
 nodemon@^3.0.1:
   version "3.0.1"
