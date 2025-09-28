@@ -1,0 +1,46 @@
+name: CI Node
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+concurrency:
+  group: node-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    if: ${{ hashFiles('package.json') != '' }}   # chỉ chạy nếu có package.json
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [ 18, 20 ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        shell: bash
+
+      - name: Lint (optional)
+        run: |
+          if npm run | grep -q "lint"; then npm run lint; else echo "No lint script"; fi
+        shell: bash
+
+      - name: Run tests
+        run: |
+          if npm run | grep -q "test"; then npm test --silent; else echo "No test script"; fi
+        shell: bash
