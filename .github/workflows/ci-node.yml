@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    if: ${{ hashFiles('package.json') != '' }}   # chỉ chạy nếu có package.json
+    # if: ${{ hashFiles('package.json') != '' }}   # chỉ chạy nếu có package.json
     strategy:
       fail-fast: false
       matrix:
