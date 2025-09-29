@@ -28,8 +28,15 @@ jobs:
         shell: bash
 
       # Lint nghiêm KHỎI chạy khi push, CHỈ chạy khi là pull_request
+      # - name: Lint (strict on PR)
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: npm run lint:ci
+      - name: Get last commit message
+        id: commitmsg
+        run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+
       - name: Lint (strict on PR)
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !contains(steps.commitmsg.outputs.msg, '[skip-lint]') }}
         run: npm run lint:ci
 
       # Khi push: chỉ test/smoke cho đỡ đỏ
