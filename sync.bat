@@ -30,5 +30,5 @@ if exist requirements.txt (
     if errorlevel 1 exit /b 1
 )
 
-echo [4/4] All done.
+echo [4/4] All done
 endlocal
