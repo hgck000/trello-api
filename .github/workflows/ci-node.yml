@@ -31,13 +31,20 @@ jobs:
       # - name: Lint (strict on PR)
       #   if: ${{ github.event_name == 'pull_request' }}
       #   run: npm run lint:ci
-      - name: Get last commit message
-        id: commitmsg
-        run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+      - name: Get all commit messages in PR
+        if: ${{ github.event_name == 'pull_request' }}
+        id: commitmsgs
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          msgs=$(git log --pretty=%B origin/${{ github.base_ref }}..HEAD)
+          echo "msgs<<EOF" >> $GITHUB_OUTPUT
+          echo "$msgs" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Lint (strict on PR)
-        if: ${{ github.event_name == 'pull_request' && !contains(steps.commitmsg.outputs.msg, '[skip-lint]') }}
+        if: ${{ github.event_name == 'pull_request' && !contains(steps.commitmsgs.outputs.msgs, '[skip-lint]') }}
         run: npm run lint:ci
+
 
       # Khi push: chỉ test/smoke cho đỡ đỏ
       - name: Test (always)
