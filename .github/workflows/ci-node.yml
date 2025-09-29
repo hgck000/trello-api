@@ -17,6 +17,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -34,16 +37,22 @@ jobs:
       - name: Get all commit messages in PR
         if: ${{ github.event_name == 'pull_request' }}
         id: commitmsgs
+        shell: bash
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
-          msgs=$(git log --pretty=%B origin/${{ github.base_ref }}..HEAD)
-          echo "msgs<<EOF" >> $GITHUB_OUTPUT
-          echo "$msgs" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          msgs="$(git log --pretty=%B "origin/${{ github.base_ref }}"..HEAD)"
+          {
+            echo "msgs<<EOF"
+            echo "$msgs"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Lint (strict on PR)
         if: ${{ github.event_name == 'pull_request' && !contains(steps.commitmsgs.outputs.msgs, '[skip-lint]') }}
         run: npm run lint:ci
+        shell: bash
+
 
 
       # Khi push: chỉ test/smoke cho đỡ đỏ
