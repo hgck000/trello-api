@@ -30,10 +30,16 @@ jobs:
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
         shell: bash
 
-      # Lấy commit message mới nhất
+      # Lấy commit message mới nhất (đã fix escape ký tự đặc biệt)
       - name: Get last commit message
         id: commitmsg
-        run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+        run: |
+          msg="$(git log -1 --pretty=%B)"
+          msg="${msg//'%'/'%25'}"
+          msg="${msg//$'\n'/'%0A'}"
+          msg="${msg//$'\r'/'%0D'}"
+          echo "msg=$msg" >> $GITHUB_OUTPUT
+        shell: bash
 
       # Chỉ lint nếu commit không có [skip-lint]
       - name: Lint (strict on PR)

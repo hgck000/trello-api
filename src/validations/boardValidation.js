@@ -5,6 +5,7 @@
  */
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '~/utils/ApiError'
 
 const creatNew = async (req, res, next) => {
   const correctCondition = Joi.object({
@@ -26,11 +27,10 @@ const creatNew = async (req, res, next) => {
     // Validation dữ liệu xong hợp lệ thì cho request đi tiếp sang controller
     next()
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message
-    })
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
   }
 }
+
 
 export const boardValidation = {
   creatNew
