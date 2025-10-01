@@ -4,7 +4,7 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { StatusCodes } from 'http-status-codes'
-import ApiError from '~/utils/ApiError'
+import { boardService } from '~/services/boardService'
 
 const createNew = async (req, res, next) => {
   try {
@@ -16,16 +16,12 @@ const createNew = async (req, res, next) => {
     // console.log('req.jwtDecoded: ', req.jwtDecoded)
 
     // Điều hướng dữ liệu sang tầng Service
+    const createdBoard = await boardService.createNew(req.body)
 
-    throw new ApiError(StatusCodes.BAD_GATEWAY, 'This is a bad request from boardController!')
+    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'This is a bad request from boardController!')
     // Có kết quả thì trả về phía client
-    // res.status(StatusCodes.CREATED).json({ message: 'POST from Controller: API create new board' })
-  } catch (error) {
-    next(error)
-    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-    //   errors: error.message
-    // })
-  }
+    res.status(StatusCodes.CREATED).json(createdBoard)
+  } catch (error) { next(error) }
 }
 
 export const boardController = {
