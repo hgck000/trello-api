@@ -1,4 +1,3 @@
-# .github/workflows/ci-node.yml
 name: CI Node
 
 on:
@@ -15,39 +14,51 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         node: [18, 20]
     runs-on: ${{ matrix.os }}
+
+    # ép toàn bộ step chạy bash (cả Ubuntu & Windows)
+    defaults:
+      run:
+        shell: bash
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: npm
 
       - name: Install deps
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
-        shell: bash
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-      # Lấy commit message mới nhất (đã fix escape ký tự đặc biệt)
-      - name: Get last commit message
-        id: commitmsg
-        run: |
-          msg="$(git log -1 --pretty=%B)"
-          msg="${msg//'%'/'%25'}"
-          msg="${msg//$'\n'/'%0A'}"
-          msg="${msg//$'\r'/'%0D'}"
-          echo "msg=$msg" >> $GITHUB_OUTPUT
-        shell: bash
-
-      # Chỉ lint nếu commit không có [skip-lint]
+      # Lint nghiêm CHỈ khi mở PR
       - name: Lint (strict on PR)
-        if: ${{ github.event_name == 'pull_request' && !contains(steps.commitmsg.outputs.msg, '[skip-lint]') }}
-        run: npm run lint:ci
-        shell: bash
+        if: ${{ github.event_name == 'pull_request'
+                && !contains(github.event.pull_request.title, '[skip-lint]')
+                && !contains(github.event.pull_request.body,  '[skip-lint]') }}
+        run: |
+          if npm run -s | grep -q "^  lint:ci"; then
+            npm run lint:ci
+          elif npm run -s | grep -q "^  lint"; then
+            npx eslint . --max-warnings=0
+          else
+            echo "No lint script"
+          fi
 
+      # Test luôn chạy nếu có script test
       - name: Test (always)
         run: |
-          if npm run | grep -q "test"; then npm test --silent; else echo "No test script"; fi
-        shell: bash
+          if npm run -s | grep -q "^  test"; then
+            npm test --silent
+          else
+            echo "No test script"
+          fi
