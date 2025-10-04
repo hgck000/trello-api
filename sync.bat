@@ -28,7 +28,7 @@ if exist requirements.txt (
     .venv\Scripts\python -m pip install -U pip
     .venv\Scripts\pip install -r requirements.txt
     if errorlevel 1 exit /b 1
-)
+
 
 echo [4/4] All done
 endlocal
