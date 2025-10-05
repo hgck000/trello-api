@@ -1,11 +1,11 @@
 import Joi from 'joi'
-import { ObjectId, ReturnDocument } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
 import { BOARD_TYPES } from '~/utils/constants'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
-import { get } from 'lodash'
+// import { get } from 'lodash'
 
 // Define collection (Name & Schema)
 const BOARD_COLLECTION_NAME = 'boards'
@@ -24,6 +24,9 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
+
+// Chỉ định ra những Fields mà chúng ta không muốn cho phép cật nhật trong hàm Update
+const INVALID_UPDATE_FIELDS = ['_id', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
@@ -81,9 +84,29 @@ const pushColumnOrderIds = async (column) => {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(column.boardId) },
       { $push: { columnOrderIds: new ObjectId(column._id) } },
-      { ReturnDocument: 'after' }
+      { returnDocument: 'after' }
     )
-    return result.value || null
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
+const update = async (boardId, updateData) => {
+  try {
+    // Lọc những field mà chúng ta không cho phép cập nhật linh tinh
+    Object.keys(updateData).forEach(fieldName => {
+      if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+        delete updateData[fieldName]
+      }
+    })
+
+    // console.log('updatedata: ', updateData)
+
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(boardId) },
+      { $set: updateData },
+      { returnDocument: 'after' }
+    )
+    return result
   } catch (error) { throw new Error(error) }
 }
 
@@ -93,5 +116,6 @@ export const boardModel = {
   createNew,
   findOneById,
   getDetail,
-  pushColumnOrderIds
+  pushColumnOrderIds,
+  update
 }
