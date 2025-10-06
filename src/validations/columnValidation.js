@@ -17,6 +17,30 @@ const creatNew = async (req, res, next) => {
   }
 }
 
+const update = async (req, res, next) => {
+  // Lưu ý không require trong trường hợp update
+  const correctCondition = Joi.object({
+    // boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+    title: Joi.string().min(3).max(50).trim().strict(),
+    cardOrderIds: Joi.array().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    )
+  })
+
+  try {
+    // Chỉ định abortEarly false để trường hợp nhiều lỗi validation thì trả về tất cả
+    // Đối với trường hợp update, cho phép Unknow để không cần đẩy 1 số field lên
+    await correctCondition.validateAsync(req.body, {
+      abortEarly: false,
+      allowUnknown: true
+    })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+  }
+}
+
 export const columnValidation = {
-  creatNew
+  creatNew,
+  update
 }
