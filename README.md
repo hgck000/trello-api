@@ -1,20 +1,75 @@
-### Requirements 
+# Trello Web (Backend)
+A lightweight, modular Express.js API for a Trello-style kanban app. Handles boards, columns, cards, and drag-and-drop reordering. Runs on Node.js + MongoDB (Atlas) and deploys smoothly to Render.
 
+## Features
+- RESTful resources: boards / columns / cards.
+- Robust reorder endpoints for columns & cards (within/between columns).
+- Input validation & error handling.
+- CORS (allowlist) for the Vercel frontend.
+- Production-safe Mongo connection & env validation.
+
+## Tech
+- **Node.js 18+ + Express.js + Joi**
+- **MongoDB Atlas** (Database)
+- **ESLint** (babel parser)
+- **Babel (preset-env, runtime) + Nodemon** (Build/Run)
+- Deploy: **Render**
+
+**Live:** https://trello-web-bay.vercel.app/
+
+## Preview
+
+Here’s a quick look at the UI:
+
+![Trello-web Demo](src/assets/demo.gif)
+
+
+## Environment Variables
+Create `packages/server/.env` (values are examples):
+
+```dotenv
+MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/?retryWrites=true&w=majority
+DATABASE_NAME=trello-quangminh
+JWT_SECRET=change-this-to-a-strong-secret
+PORT=8080
+NODE_ENV=production
 ```
-* nodejs >= 18.16.0
-* npm = v9.8.1
-* yarn = v1.22.19
 
-* "express": "^4.18.2"
-* "nodemon": "^3.0.1"
-* "eslint": "^8.47.0"
+*Important: **MONGODB_URI** must be a single line (no quotes, no line breaks).*
 
-* "@babel/runtime": "^7.22.10"
-* "@babel/cli": "^7.22.10"
-* "@babel/core": "^7.22.10"
-* "@babel/eslint-parser": "^7.22.10"
-* "@babel/node": "^7.22.10"
-* "@babel/plugin-transform-runtime": "^7.22.10"
-* "@babel/preset-env": "^7.22.10"
-* "babel-plugin-module-resolver": "^5.0.0"
+## Quick Start (after clone)
+
+*...**FOR LINUX**...*
+```bash
+chmod +x sync.sh
+./sync.sh
+```
+
+*...**FOR WINDOWS**...*
+```bash
+# 1) Require: Node.js >= 18
+node -v
+
+# 2) Active Yarn (if yarn is not available)
+corepack enable
+corepack prepare yarn@stable --activate
+
+# 3) Install dependencies
+# Yarn:
+yarn
+# (If you don't use Yarn, you can use npm:)
+# npm install
+
+# 4) Create file .env (example)
+$envText = @"
+MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/?retryWrites=true&w=majority
+DATABASE_NAME=trello-quangminh
+PORT=8080
+NODE_ENV=development
+"@
+
+
+# 5) Run dev
+yarn dev
+# (OR: npm run dev)
 ```

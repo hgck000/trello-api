@@ -1,30 +1,51 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 set -euo pipefail
 
-MASTER_BRANCH=${1:-master}
+if [ ! -f package.json ]; then
+  echo "❌ No package.json found. Run this at repo root."
+  exit 1
+fi
 
-echo "[1/4] Pull code (rebase) từ origin/$MASTER_BRANCH"
-git pull --rebase origin "$MASTER_BRANCH"
+echo "[1/2] Install dependencies"
 
-# --- Node.js ---
-if [ -f package.json ]; then
-  echo "[2/4] Cài deps Node.js"
-  if [ -f package-lock.json ]; then
-    npm ci
+if [ -f yarn.lock ]; then
+  # Prefer Yarn if lockfile exists
+  if command -v corepack >/dev/null 2>&1; then
+    corepack enable >/dev/null 2>&1 || true
+    corepack prepare yarn@stable --activate >/dev/null 2>&1 || true
+  fi
+  echo "→ yarn install --frozen-lockfile"
+  yarn install --frozen-lockfile
+
+  echo "[2/2] Start dev"
+  if yarn run -T dev >/dev/null 2>&1; then
+    exec yarn dev
   else
-    npm install
+    echo "❌ Missing 'dev' script in package.json"
+    exit 1
+  fi
+
+elif [ -f package-lock.json ]; then
+  echo "→ npm ci"
+  npm ci
+
+  echo "[2/2] Start dev"
+  if npm run -s dev >/dev/null 2>&1; then
+    exec npm run dev
+  else
+    echo "❌ Missing 'dev' script in package.json"
+    exit 1
+  fi
+
+else
+  echo "→ npm install"
+  npm install
+
+  echo "[2/2] Start dev"
+  if npm run -s dev >/dev/null 2>&1; then
+    exec npm run dev
+  else
+    echo "❌ Missing 'dev' script in package.json"
+    exit 1
   fi
 fi
-
-# --- Python ---
-if [ -f requirements.txt ]; then
-  echo "[3/4] Tạo venv (nếu chưa có) & cài deps Python"
-  if [ ! -d ".venv" ]; then
-    python3 -m venv .venv
-  fi
-  . .venv/bin/activate
-  python -m pip install -U pip
-  pip install -r requirements.txt
-fi
-
-echo "[4/4] Done ✔"
