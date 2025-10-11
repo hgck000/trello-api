@@ -1,4 +1,4 @@
-# Trello Web (Backend)
+# Trello Web (Node.js + Express.js + MongoDB)
 A lightweight, modular Express.js API for a Trello-style kanban app. Handles boards, columns, cards, and drag-and-drop reordering. Runs on Node.js + MongoDB (Atlas) and deploys smoothly to Render.
 
 ## Features
@@ -21,8 +21,9 @@ A lightweight, modular Express.js API for a Trello-style kanban app. Handles boa
 
 Here’s a quick look at the UI:
 
-![Trello-web Demo](src/assets/demo.gif)
+![Trello-web Demo](src/assets/demo1.gif)
 
+![Trello-web Demo](src/assets/demo2.gif)
 
 ## Environment Variables
 Create `packages/server/.env` (values are examples):
