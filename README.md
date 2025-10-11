@@ -1,5 +1,10 @@
-# Trello Web (Backend)
+> 🦉 *“Hoo... hoo... owl never sleeps.”*
+> — Cú Đại Nhân 🦉
+
+# Trello Web (Node.js + Express.js + MongoDB)
 A lightweight, modular Express.js API for a Trello-style kanban app. Handles boards, columns, cards, and drag-and-drop reordering. Runs on Node.js + MongoDB (Atlas) and deploys smoothly to Render.
+
+---
 
 ## Features
 - RESTful resources: boards / columns / cards.
@@ -7,6 +12,8 @@ A lightweight, modular Express.js API for a Trello-style kanban app. Handles boa
 - Input validation & error handling.
 - CORS (allowlist) for the Vercel frontend.
 - Production-safe Mongo connection & env validation.
+
+---
 
 ## Tech
 - **Node.js 18+ + Express.js + Joi**
@@ -17,12 +24,17 @@ A lightweight, modular Express.js API for a Trello-style kanban app. Handles boa
 
 **Live:** https://trello-web-bay.vercel.app/
 
+---
+
 ## Preview
 
 Here’s a quick look at the UI:
 
-![Trello-web Demo](src/assets/demo.gif)
+![Trello-web Demo](src/assets/demo1.gif)
 
+![Trello-web Demo](src/assets/demo2.gif)
+
+---
 
 ## Environment Variables
 Create `packages/server/.env` (values are examples):
@@ -36,6 +48,8 @@ NODE_ENV=production
 ```
 
 *Important: **MONGODB_URI** must be a single line (no quotes, no line breaks).*
+
+---
 
 ## Quick Start (after clone)
 
